@@ -1,0 +1,21 @@
+name: Checkov
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  Checkov:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Retrieve secrets
+      run: |
+        aws secretsmanager get-secret-value --secret-id dev/ty/info --output json | jq .SecretString | sed -e 's/[\"/]//g'
+
+    - name: Retrieve aws store variables
+      run: |
+        aws ssm get-parameter --name /dev/ty/guide | jq .Parameter.Value
